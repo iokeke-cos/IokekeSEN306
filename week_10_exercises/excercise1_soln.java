@@ -1,64 +1,53 @@
-public interface QueueADT {
-    void enqueue(int element);
-    int dequeue();
-    boolean isEmpty();
-    int size();
-}
-
+// Provided Node definition
 class Node {
     int data;
     Node next;
-
-    Node(int data) {
-        this.data = data;
-    }
+    Node(int data) { this.data = data; }
 }
 
+// Complete LinkedQueue Implementation
 public class LinkedQueue implements QueueADT {
-
-    private Node front;    //front of queue
-    private Node rear;     //back of queue
-    private int size;      //number of elemennts
-
-    public LinkedQueue() {
-        front = rear = null;
-        size = 0;
-    }
+    private Node head;
+    private Node tail;
+    private int count;
 
     @Override
     public void enqueue(int element) {
         Node newNode = new Node(element);
-        if (rear != null) {
-            rear.next = newNode;
+        if (isEmpty()) {
+            head = tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
         }
-        rear = newNode;
-        if (front == null) {
-            front = rear;
-        }
-        size++;
+        count++;
     }
 
     @Override
     public int dequeue() {
         if (isEmpty()) {
-            throw new RuntimeException("Queue is empty");
+            throw new RuntimeException("Empty");
         }
-        int data = front.data;
-        front = front.next;
-        size--;
-        if (front == null) {
-            rear = null;
+        int value = head.data;
+        head = head.next;
+        if (head == null) {
+            tail = null;
         }
-        return data;
+        count--;
+        return value;
     }
 
     @Override
     public boolean isEmpty() {
-        return size == 0;
+        return count == 0;
     }
 
     @Override
     public int size() {
-        return size;
+        return count;
     }
 }
+
+
+//Conceptual Question: "Why does this work?"
+//Answer: It works perfectly without changing any client code in Main.java because both ArrayListQueue and LinkedQueue implement the same QueueADT interface. This is an application of Polymorphism and Abstraction; the client code only interacts with the behaviors specified by the interface, making the underlying implementation details completely interchangeable.
