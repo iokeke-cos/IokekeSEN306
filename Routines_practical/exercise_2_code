@@ -1,0 +1,83 @@
+public class CustomerRefactored {
+
+    // Customer class/struct to reduce parameter count
+    public static class Customer {
+        public String name;
+        public String address;
+        public String email;
+        public int type; // 1, 2, etc.
+        public boolean isVip;
+
+        public Customer(String name, String address, String email, int type, boolean isVip) {
+            this.name = name;
+            this.address = address;
+            this.email = email;
+            this.type = type;
+            this.isVip = isVip;
+        }
+    }
+
+    // 1. Core coordination procedure (Verb + Object)
+    public void processCustomer(Customer customer, double[] orders, int orderCount) {
+        // Input validation
+        if (customer == null || orders == null || orderCount < 0 || orderCount > orders.length) {
+            throw new IllegalArgumentException("Invalid customer process arguments.");
+        }
+        validateOrders(orders, orderCount);
+
+        // Functional processing broken into cohesive routines
+        double rawSum = calculateOrderSum(orders, orderCount);
+        double finalTotal = applyDiscounts(rawSum, customer.type);
+        
+        String reportMessage = generateReportMessage(customer, finalTotal);
+        
+        // Output actions
+        System.out.println(reportMessage);
+        if (customer.email != null) {
+            sendEmail(customer.email, reportMessage);
+        }
+    }
+
+    // 2. Input validation routine (Verb + Object procedure)
+    private void validateOrders(double[] orders, int orderCount) {
+        for (int i = 0; i < orderCount; i++) {
+            if (orders[i] < 0) {
+                throw new IllegalArgumentException("Order values cannot be negative.");
+            }
+        }
+    }
+
+    // 3. Calculation routine (Noun function)
+    private double calculateOrderSum(double[] orders, int orderCount) {
+        double sum = 0;
+        for (int i = 0; i < orderCount; i++) {
+            sum += orders[i];
+        }
+        return sum;
+    }
+
+    // 4. Discount application routine (Noun function)
+    private double applyDiscounts(double sum, int customerType) {
+        double discountRate = 0;
+        if (customerType == 1) {
+            discountRate = 0.1;
+        } else if (customerType == 2) {
+            discountRate = 0.2;
+        }
+        return sum - (sum * discountRate);
+    }
+
+    // 5. Message generation routine (Noun function)
+    private String generateReportMessage(Customer customer, double total) {
+        String msg = "Hello " + customer.name + " of " + customer.address + ", your total is " + total;
+        if (customer.isVip) {
+            msg += " (VIP)";
+        }
+        return msg;
+    }
+
+    // Mock dependency method
+    private void sendEmail(String email, String msg) {
+        // Email transmission logic here
+    }
+}

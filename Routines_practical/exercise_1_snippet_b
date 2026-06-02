@@ -1,0 +1,10 @@
+void g(int *p, int q) {
+    *p = 10;
+    q = 20;
+}
+
+int m = 5, n = 5;
+g(&m, n);
+print(m, n);
+
+//10 5 -- Answer
