@@ -1,0 +1,70 @@
+public class FinancialProcessor {
+
+    // Named constants replacing magic numbers
+    private static final int MAX_RECORDS = 100;
+    private static final int MONTHS_IN_YEAR = 12;
+    private static final double QUARTERLY_MULTIPLIER = 4.0;
+
+    private static final int EXPENSE_TYPE_STANDARD = 1;
+    private static final int EXPENSE_TYPE_CORPORATE = 2;
+    private static final int EXPENSE_TYPE_SPECIAL = 3;
+
+    /**
+     * Refactored, cohesive entry point replacing 'HandleStuff'.
+     * Unused parameters screenX, screenY, newColor, prevColor, and status have been removed.
+     */
+    public FinancialSummary processQuarterlyFinancials(
+            InputRecord inputRec, 
+            int crntQtr, 
+            EmpRecord empRec, 
+            double ytdRevenue, 
+            int expenseType) {
+
+        // Validation Check: Prevent divide by zero error
+        if (crntQtr == 0) {
+            throw new IllegalArgumentException("Current quarter cannot be zero.");
+        }
+
+        // 1. Database and Array Initializations
+        initializeRecords(inputRec, crntQtr);
+        updateCorpDatabase(empRec);
+
+        // 2. Perform Separate Calculations
+        double estimatedRevenue = calculateEstimatedRevenue(ytdRevenue, crntQtr);
+        double[] profits = calculateMonthlyProfits(inputRec, expenseType);
+
+        return new FinancialSummary(estimatedRevenue, profits);
+    }
+
+    private void initializeRecords(InputRecord inputRec, int crntQtr) {
+        for (int i = 0; i < MAX_RECORDS; i++) {
+            inputRec.revenue[i] = 0;
+            // Assuming corpExpense[][] matrix visibility within context
+            inputRec.expense[i] = corpExpense[crntQtr][i];
+        }
+    }
+
+    private double calculateEstimatedRevenue(double ytdRevenue, int crntQtr) {
+        return ytdRevenue * QUARTERLY_MULTIPLIER / crntQtr;
+    }
+
+    private double[] calculateMonthlyProfits(InputRecord inputRec, int expenseType) {
+        double[] calculatedProfits = new double[MONTHS_IN_YEAR];
+
+        for (int i = 0; i < MONTHS_IN_YEAR; i++) {
+            // Fixed BUG: 'revenue' is no longer undefined; properly mapped to inputRec.revenue[i]
+            double revenueVal = inputRec.revenue[i];
+
+            if (expenseType == EXPENSE_TYPE_STANDARD) {
+                calculatedProfits[i] = revenueVal - expense.type[i];
+            } else if (expenseType == EXPENSE_TYPE_CORPORATE) {
+                // Fixed BUG: missing loops for type 2 completely resolved
+                calculatedProfits[i] = revenueVal - expense.type2[i];
+            } else if (expenseType == EXPENSE_TYPE_SPECIAL) {
+                // Fixed BUG: missing loops for type 3 completely resolved
+                calculatedProfits[i] = revenueVal - expense.type3[i];
+            }
+        }
+        return calculatedProfits;
+    }
+}

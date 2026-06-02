@@ -1,0 +1,62 @@
+# Named constants to replace magic numbers
+MAX_RECORDS = 100
+MONTHS_IN_YEAR = 12
+QUARTERLY_MULTIPLIER = 4.0
+
+EXPENSE_TYPE_STANDARD = 1
+EXPENSE_TYPE_CORPORATE = 2
+EXPENSE_TYPE_SPECIAL = 3
+
+def process_quarterly_financials(input_rec, crnt_qtr, emp_rec, ytd_revenue, expense_type) -> tuple:
+    """
+    Main orchestrator that handles quarterly financial processing.
+    Replaces the low-quality 'HandleStuff' routine.
+    """
+    # 1. Validation Check: Avoid divide-by-zero
+    if crnt_qtr == 0:
+        raise ValueError("Current quarter (crnt_qtr) cannot be zero.")
+        
+    # 2. Initialize records and corporate data
+    initialize_revenue_and_expenses(input_rec, crnt_qtr)
+    update_corporate_database(emp_rec)
+    
+    # 3. Financial calculations
+    estimated_revenue = calculate_estimated_revenue(ytd_revenue, crnt_qtr)
+    profit_data = calculate_profits(input_rec, expense_type)
+    
+    return estimated_revenue, profit_data
+
+
+def initialize_revenue_and_expenses(input_rec, crnt_qtr) -> None:
+    """Initializes arrays for revenue and sets matching corporate expenses."""
+    for i in range(MAX_RECORDS):
+        input_rec.revenue[i] = 0
+        # Assuming corpExpense is accessible or passed in
+        input_rec.expense[i] = corpExpense[crnt_qtr][i]
+
+
+def calculate_estimated_revenue(ytd_revenue: float, crnt_qtr: int) -> float:
+    """Calculates annual estimated revenue based on year-to-date figures."""
+    return ytd_revenue * QUARTERLY_MULTIPLIER / crnt_qtr
+
+
+def calculate_profits(input_rec, expense_type: int) -> list:
+    """
+    Calculates profit margins based on the specific expense type category.
+    Fixes the missing loop bugs for types 2 and 3.
+    """
+    # Using a local list to avoid unexpected modification of global variables
+    calculated_profits = [0.0] * MONTHS_IN_YEAR
+    
+    for i in range(MONTHS_IN_YEAR):
+        # Fixed BUG: 'revenue' was undefined; now properly pulling from input_rec.revenue
+        revenue_val = input_rec.revenue[i]
+        
+        if expense_type == EXPENSE_TYPE_STANDARD:
+            calculated_profits[i] = revenue_val - expense.type[i]
+        elif expense_type == EXPENSE_TYPE_CORPORATE:
+            calculated_profits[i] = revenue_val - expense.type2[i] # Fixed missing loop
+        elif expense_type == EXPENSE_TYPE_SPECIAL:
+            calculated_profits[i] = revenue_val - expense.type3[i] # Fixed missing loop
+            
+    return calculated_profits
