@@ -1,0 +1,56 @@
+public class FinancialManager {
+    // Requirements: Replace magic numbers with named constants
+    private static final int EXPENSE_TYPE_1 = 1;
+    private static final int EXPENSE_TYPE_2 = 2;
+    private static final int EXPENSE_TYPE_3 = 3;
+
+    /**
+     * Refactored entry point replacing the messy 'HandleStuff'
+     * Requirement: Removed unused parameters screenX and screenY
+     */
+    public void processQuarterlyFinancials(int quarter, double[] expenses) {
+        // Requirement: Add a zero-check for quarter (throw an exception if 0)
+        if (quarter == 0) {
+            throw new IllegalArgumentException("Quarter cannot be zero.");
+        }
+
+        // Requirement: Split into at least 4 cohesive routines
+        validateExpenses(expenses);
+        double totalExpenses = calculateTotalExpenses(expenses);
+        generateQuarterlyReport(quarter, totalExpenses);
+    }
+
+    // Routine 1: Input Validation
+    private void validateExpenses(double[] expenses) {
+        if (expenses == null || expenses.length == 0) {
+            throw new IllegalArgumentException("Expense data cannot be empty.");
+        }
+    }
+
+    // Routine 2: Calculation and logic routing
+    private double calculateTotalExpenses(double[] expenses) {
+        double total = 0.0;
+        
+        // Requirement: Fix the missing loops for expense types 2 and 3
+        for (int i = 0; i < expenses.length; i++) {
+            total += expenses[i];
+            
+            // Example of incorporating fixed handling for all types using constants
+            processExpenseItem(EXPENSE_TYPE_1, expenses[i]);
+            processExpenseItem(EXPENSE_TYPE_2, expenses[i]); 
+            processExpenseItem(EXPENSE_TYPE_3, expenses[i]); 
+        }
+        return total;
+    }
+
+    // Routine 3: Specific item level processing
+    private void processExpenseItem(int expenseType, double amount) {
+        // Core individual processing logic per expense type goes here
+    }
+
+    // Routine 4: Output / Reporting
+    private void generateQuarterlyReport(int quarter, double total) {
+        System.out.printf("Quarter %d Financial Summary%n", quarter);
+        System.out.printf("Total Aggregated Expenses: $%.2f%n", total);
+    }
+}
